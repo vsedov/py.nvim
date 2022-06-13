@@ -1,7 +1,4 @@
 local Job = require("plenary.job")
-local Path = require("plenary.path")
-local scan = require("plenary.scandir")
-
 local M = {}
 -- ╭────────────────────────────────────────────────────────────────────╮
 -- │                                                                    │
@@ -12,24 +9,7 @@ local M = {}
 --- Find Poetry exists with the project spec.
 -- Returns parent and file of pyproject.
 function M.findPoetry()
-    local cwd = vim.fn.getcwd()
-    local current_path = vim.api.nvim_exec(":echo @%", 1)
-
-    local parents = Path:new(current_path):parents()
-    for _, parent in pairs(parents) do
-        local files = scan.scan_dir(parent, { hidden = false, depth = 1 })
-        for _, file in pairs(files) do
-            if file == parent .. "/" .. "pyproject.toml" then
-                return parent, file
-            end
-        end
-
-        if parent == cwd then
-            break
-        end
-    end
-
-    vim.notify("Poetry Environment Not Found", "error", { title = "py.nvim" })
+    return require("py.utils").pathFinder(false, "pyproject.toml", "Poetry Environment Not Found")
 end
 
 --- show package details : gets information from poetry to get information from a package.

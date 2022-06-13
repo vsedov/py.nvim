@@ -1,30 +1,22 @@
 local M = {}
 
-local default_config = {
-
+M.default_config = {
     mappings = false,
-
+    taskipy = true,
     leader = "<space>p",
-
     poetry_install_every = 1,
-
     ipython_in_vsplit = 1,
     ipython_auto_install = 1,
     ipython_auto_reload = 1,
     ipython_send_imports = 1,
 }
 
-function M.setup(user_config)
-    if vim.fn.executable("poetry") == 0 then
-        error("poetry is not executable")
-    end
-
-    user_config = user_config or {}
-    M.config = vim.tbl_extend("keep", user_config, default_config)
-end
-
 function M.mappings()
     return M.config.mappings
+end
+
+function M.taskipy()
+    return M.config.taskipy
 end
 
 function M.leader()
