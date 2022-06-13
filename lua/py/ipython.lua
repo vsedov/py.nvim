@@ -17,14 +17,13 @@ function M.launchIPython()
     -- Get Current Details
     local launch_buf = vim.api.nvim_get_current_buf()
     local launch_win = vim.api.nvim_get_current_win()
-    local cwd = vim.fn.getcwd()
     local current_path = vim.api.nvim_exec(":echo @%", 1)
 
     -- Ensure Current File is .py
-    local filetype = require("plenary.filetype").detect(current_path)
+    require("plenary.filetype").detect(current_path)
 
     -- Get Poetry File in Parent
-    poetry_dir, _ = poetry.findPoetry()
+    local poetry_dir, _ = poetry.findPoetry()
 
     if poetry_dir == nil then
         return nil
@@ -41,7 +40,7 @@ function M.launchIPython()
     end
 
     -- Navigate to the IPython
-    ipython_str = "cd " .. poetry_dir .. " && clear && clear && poetry run ipython"
+    local ipython_str = "cd " .. poetry_dir .. " && clear && clear && poetry run ipython"
 
     -- Run AutoReload on Launch
     if config.ipython_auto_reload() == 1 then
@@ -59,6 +58,7 @@ function M.launchIPython()
 
     local chan = vim.fn.termopen(ipython_str, {
         on_exit = function()
+            -- local chan = vim.api.nvim_get_current_buf()
             M.ipython.opened = 0
             M.ipython.win_id = current_win
             M.ipython.buf_id = bufn

@@ -23,7 +23,7 @@ function M.getObject(bufn)
         return nil
     end
 
-    local bufn = bufn or vim.api.nvim_get_current_buf()
+    bufn = bufn or vim.api.nvim_get_current_buf()
     local text = ts_utils.get_node_text(node, bufn)
     local _, start_column, _, _ = node:range()
     local message = table.concat(text, "\r")
@@ -35,14 +35,14 @@ function M.getObject(bufn)
 end
 
 function M.getImports()
-    root = ts_utils.get_root_for_position(1, 1, nil)
+    local root = ts_utils.get_root_for_position(1, 1, nil)
 
     if root == nil then
         return nil
     end
 
     local import_nodes = {}
-    for k, v in pairs(ts_utils.get_named_children(root)) do
+    for _, v in pairs(ts_utils.get_named_children(root)) do
         if v:type() == "import_statement" then
             table.insert(import_nodes, v)
         end
@@ -53,14 +53,14 @@ function M.getImports()
     end
 
     local import_text = ""
-    for k, v in pairs(import_nodes) do
+    for _, v in pairs(import_nodes) do
         local node_text = ts_utils.get_node_text(v)
 
-        for j, v in pairs(node_text) do
+        for _, val in pairs(node_text) do
             if import_text ~= "" then
-                import_text = import_text .. "\r" .. v
+                import_text = import_text .. "\r" .. val
             else
-                import_text = v
+                import_text = val
             end
         end
     end
@@ -70,12 +70,12 @@ end
 
 function M.parsePythonObject(object_text)
     if string.find(object_text, "class ") ~= nil then
-        txt = string.gsub(object_text, "class ", "")
+        local txt = string.gsub(object_text, "class ", "")
         txt = string.gsub(txt, "%(.*%):.*", "")
         txt = string.gsub(txt, ":.*", "")
         return { "class", txt }
     elseif string.find(object_text, "def ") ~= nil then
-        txt = string.gsub(object_text, "def ", "")
+        local txt = string.gsub(object_text, "def ", "")
         txt = string.gsub(txt, "%(.*%):.*", "")
         return { "function", txt }
     end
@@ -87,16 +87,15 @@ function M.getPythonObject(object, search_name)
         return nil
     end
 
-    local objects = {}
-    for k, v in pairs(ts_utils.get_named_children(root)) do
+    for _, v in pairs(ts_utils.get_named_children(root)) do
         if v:type() == "function_definition" and object == "function" then
-            parsed = M.parsePythonObject(ts_utils.get_node_text(v)[1])
+            local parsed = M.parsePythonObject(ts_utils.get_node_text(v)[1])
 
             if search_name == parsed[2] then
                 return v
             end
         elseif v:type() == "class_definition" and object == "class" then
-            parsed = M.parsePythonObject(ts_utils.get_node_text(v)[1])
+            local parsed = M.parsePythonObject(ts_utils.get_node_text(v)[1])
 
             if search_name == parsed[2] then
                 return v
@@ -116,7 +115,7 @@ function M.getIPythonHighlighted()
 
     local lines = utils.split(text, "\n")
 
-    new_lines = {}
+    local new_lines = {}
     for _, line in pairs(lines) do
         line = string.gsub(line, "In .%d.%p%s", "")
         line = string.gsub(line, "%s%s%s%p%p%p%p%s", "")
