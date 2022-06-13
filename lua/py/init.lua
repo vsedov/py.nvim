@@ -1,2 +1,2 @@
-local py = require('py.py')
+local py = require("py.py")
 return py
