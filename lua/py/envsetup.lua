@@ -1,10 +1,9 @@
+local Job = require("plenary.job")
+
 local M = {}
-
--- local env_commands = { "info", "list", "remove", "use" }
-
 --- get all python versions on your system that you can create an env with
 ---@return  table : a list of all python versions on your system
-M.getPythonVersions = function()
+local getPythonVersions = function()
     local python_versions_list = {}
     for line in io.popen("ls /usr/bin/python3.*"):read("*a"):gmatch("[^\r\n]+") do
         if not line:find("-config") then
@@ -65,6 +64,24 @@ M.dirEnvSetup = function()
             vim.cmd([[silent !direnv allow]])
         end, 1000)
     end
+end
+
+--- Create env for poetry directories
+M.createEnv = function()
+    local all_python_versions = getPythonVersions()
+    vim.ui.select(all_python_versions, { prompt = "python version :" }, function(version)
+        local poetry_dir, _ = require("py.poetry").findPoetry()
+        Job
+            :new({
+                command = "poetry",
+                args = { "env", "use", version },
+                cwd = poetry_dir,
+                on_exit = function(_, _)
+                    vim.notify("Env Has been created", "info", { title = "py.nvim" })
+                end,
+            })
+            :start()
+    end)
 end
 
 return M
