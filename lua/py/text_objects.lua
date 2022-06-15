@@ -24,7 +24,7 @@ function M.getObject(bufn)
     end
 
     bufn = bufn or vim.api.nvim_get_current_buf()
-    local text = ts_utils.get_node_text(node, bufn)
+    local text = vim.treesitter.query.get_node_text(node, bufn)
     local _, start_column, _, _ = node:range()
     local message = table.concat(text, "\r")
     while start_column ~= 0 do
@@ -54,7 +54,7 @@ function M.getImports()
 
     local import_text = ""
     for _, v in pairs(import_nodes) do
-        local node_text = ts_utils.get_node_text(v)
+        local node_text = vim.treesitter.query.get_node_text(v)
 
         for _, val in pairs(node_text) do
             if import_text ~= "" then
