@@ -21,6 +21,11 @@ function keymap.set_mappings()
     -- Poetry Mappings
     keymap.map("n", "a", "<cmd>lua require('py.poetry').inputDependency()<CR>")
     keymap.map("n", "d", "<cmd>lua require('py.poetry').showPackage()<CR>")
+
+    if config.taskipy() then
+        keymap.map("n", "li", "<cmd>lua require('py.taskipy').runTasks()<cr>")
+        keymap.map("n", "ll", "<cmd>lua require('py.taskipy').runTaskInput()<cr>")
+    end
 end
 
 return keymap
