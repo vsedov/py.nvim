@@ -10,9 +10,7 @@ M.default_config = {
     ipython_auto_reload = 1,
     ipython_send_imports = 1,
     envrc = {
-        "layout_poetry",
         "export PYTHONPATH=$(pwd)",
-        '#eval "$(register-python-argcomplete cz)"',
     },
     use_direnv = true,
 }
