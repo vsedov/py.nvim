@@ -2,7 +2,9 @@ local M = {}
 local py_config = require("py.config")
 
 local command_list = {
-    -- Ipython commands
+    -- ╭────────────────────────────────────────────────────────────────────╮
+    -- │      Ipython commands                                              │
+    -- ╰────────────────────────────────────────────────────────────────────╯
     ["toggleIpython"] = function()
         require("py.ipython").toggleIPython()
     end,
@@ -18,7 +20,9 @@ local command_list = {
         require("py.ipython").sendHighlightsToIPython()
     end,
 
-    -- Pytest Commands
+    -- ╭────────────────────────────────────────────────────────────────────╮
+    -- │      Pytest Commands                                               │
+    -- ╰────────────────────────────────────────────────────────────────────╯
     ["testStart"] = function()
         require("py.pytest").launchPytest()
     end,
@@ -26,12 +30,22 @@ local command_list = {
         require("py.pytest").showPytestResult()
     end,
 
-    -- poetry mapping
+    -- ╭────────────────────────────────────────────────────────────────────╮
+    -- │     poetry mapping                                                 │
+    -- ╰────────────────────────────────────────────────────────────────────╯
     ["addDep"] = function()
         require("py.poetry").inputDependency()
     end,
     ["showPackage"] = function()
         require("py.poetry").showPackage()
+    end,
+
+    -- ╭────────────────────────────────────────────────────────────────────╮
+    -- │     env mapping                                                    │
+    -- ╰────────────────────────────────────────────────────────────────────╯
+
+    ["envCreate"] = function()
+        require("py.envsetup").createEnv()
     end,
 }
 
@@ -65,6 +79,15 @@ function M.setup(user_config)
     py_config.config = vim.tbl_extend("keep", user_config, default_config)
     if py_config.mappings() then
         require("py.mappings").set_mappings()
+    end
+
+    if py_config.use_direnv() then
+        local direnv_command = {
+            ["dirEnvCreate"] = function()
+                require("py.envsetup").dirEnvSetup()
+            end,
+        }
+        vim.tbl_extend("keep", command_list, direnv_command)
     end
 
     if py_config.taskipy() then
