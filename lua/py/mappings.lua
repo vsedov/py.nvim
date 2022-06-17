@@ -1,9 +1,9 @@
-local config = require("py.config")
+local config = require("py.config").config
 
 local keymap = {}
 
 function keymap.map(mode, key, rhs)
-    local lhs = string.format("%s%s", config.leader(), key)
+    local lhs = string.format("%s%s", config.leader, key)
     vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
 end
 
@@ -22,7 +22,7 @@ function keymap.set_mappings()
     keymap.map("n", "a", "<cmd>lua require('py.poetry').inputDependency()<CR>")
     keymap.map("n", "d", "<cmd>lua require('py.poetry').showPackage()<CR>")
 
-    if config.taskipy() then
+    if config.taskipy then
         keymap.map("n", "li", "<cmd>lua require('py.taskipy').runTasks()<cr>")
         keymap.map("n", "ll", "<cmd>lua require('py.taskipy').runTaskInput()<cr>")
     end

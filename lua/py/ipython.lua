@@ -1,5 +1,5 @@
 local poetry = require("py.poetry")
-local config = require("py.config")
+local config = require("py.config").config
 local text_objects = require("py.text_objects")
 
 local M = {}
@@ -30,12 +30,12 @@ function M.launchIPython()
     end
 
     -- Install IPython Automatically
-    if config.ipython_auto_install() == 1 then
+    if config.ipython_auto_install == 1 then
         poetry.addDependency("--dev ipython", { silent = true })
     end
 
     -- Run Poetry Install Automatically
-    if config.poetry_install_every() == 1 then
+    if config.poetry_install_every == 1 then
         poetry.installPoetry()
     end
 
@@ -43,12 +43,12 @@ function M.launchIPython()
     local ipython_str = "cd " .. poetry_dir .. " && clear && clear && poetry run ipython"
 
     -- Run AutoReload on Launch
-    if config.ipython_auto_reload() == 1 then
+    if config.ipython_auto_reload == 1 then
         ipython_str = ipython_str .. " --ext=autoreload --InteractiveShellApp.exec_lines='autoreload 2'"
     end
 
     -- Launch Terminal
-    if config.ipython_in_vsplit() == 1 then
+    if config.ipython_in_vsplit == 1 then
         vim.api.nvim_exec(":vsplit", 0)
     end
 
@@ -75,7 +75,7 @@ function M.launchIPython()
     M.ipython.launch_buf = launch_buf
     M.ipython.launch_win = launch_win
 
-    if config.ipython_send_imports() == 1 then
+    if config.ipython_send_imports == 1 then
         vim.api.nvim_set_current_win(launch_win)
         M.sendImportsToIPython()
     else

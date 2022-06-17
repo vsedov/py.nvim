@@ -68,29 +68,32 @@ local function create_command()
     })
 end
 
+local table_merge = function(itemList)
+    command_list = vim.tbl_deep_extend("force", command_list, itemList)
+end
+
 function M.setup(user_config)
-    local default_config = py_config.default_config
     if vim.fn.executable("poetry") == 0 then
         error("poetry is not executable")
     end
 
     user_config = user_config or {}
 
-    py_config.config = vim.tbl_extend("keep", user_config, default_config)
-    if py_config.mappings() then
+    py_config.config = vim.tbl_extend("keep", user_config, py_config.default_config)
+    if py_config.config.mappings then
         require("py.mappings").set_mappings()
     end
 
-    if py_config.use_direnv() then
+    if py_config.config.use_direnv then
         local direnv_command = {
             ["dirEnvCreate"] = function()
                 require("py.envsetup").dirEnvSetup()
             end,
         }
-        vim.tbl_extend("keep", command_list, direnv_command)
+        table_merge(direnv_command)
     end
 
-    if py_config.taskipy() then
+    if py_config.config.taskipy then
         local taskipy_commands = {
             ["taskList"] = function()
                 require("py.taskipy").runTasks()
@@ -100,7 +103,7 @@ function M.setup(user_config)
             end,
         }
 
-        vim.tbl_extend("keep", command_list, taskipy_commands)
+        table_merge(taskipy_commands)
     end
 
     create_command()

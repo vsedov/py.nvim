@@ -1,4 +1,5 @@
 local Job = require("plenary.job")
+local config = require("py.config").config
 
 local M = {}
 --- get all python versions on your system that you can create an env with
@@ -21,7 +22,7 @@ end
 M.dirEnvSetup = function()
     -- avoid running direnv allow multiple times
     local direnv_activation = false
-    local envrc = require("py.config").envrc()
+    local envrc = config.envrc
     local env_dir, env_file = require("py.utils").pathFinder(
         true,
         ".envrc",
@@ -57,7 +58,7 @@ M.dirEnvSetup = function()
         end
     end
 
-    if direnv_activation and require("py.config").use_direnv() then
+    if direnv_activation and config.use_direnv then
         vim.notify("direnv will be activated", "info", { title = "py.nvim" })
         vim.defer_fn(function()
             vim.cmd("lcd" .. dir)
